@@ -1,0 +1,36 @@
+# Workshop environment: the readable source the lockfile is generated from.
+# To set up, install the lock instead (see the README):
+#
+#   py -3.13 -m venv venv              (Linux/macOS: python3.13 -m venv venv)
+#   venv\Scripts\Activate.ps1          (Linux/macOS: source venv/bin/activate)
+#   pip install -r requirements.lock
+#
+# Install from this file only when changing dependencies (then regenerate the
+# lock; see its header), or on Python 3.11, which the lock does not support.
+#
+# Python: 3.13 recommended. 3.11 is the floor for this file (pandas 3 requires
+# it) and 3.12 for the lock (its numpy pin has no older wheels). 3.13 is the
+# ceiling, because the mesher needs `triangle`, which has no cp314 wheel and will
+# not build from source on 3.14. The notebook side alone runs on 3.14, but the
+# pipeline as a whole does not.
+# Expect ~1.4 GB on disk and a few minutes. VTK alone is 639 MB (monolithic
+# wheel, no slim variant) and scipy adds ~110 MB.
+
+# --- Notebook ---
+# The [jupyter] extra is required. It pulls in the trame stack, without which
+# pv.set_jupyter_backend('html') fails with:
+#   ImportError: Please install trame dependencies
+pyvista[jupyter]==0.48.4
+pandas==3.0.5
+jupyterlab==4.6.3
+# Also pulled in by pyvista and vtk, but the notebooks import it directly.
+matplotlib==3.11.1
+numpy
+# 05-probe-points-and-form imports scipy directly (griddata, for the unrolled
+# form plot). The mesher needs it too.
+scipy
+
+# --- Mesher ---
+# qif-brep2mesh, the companion QIF project that turns the B-rep into triangles.
+# Pinned to a release tag. It brings in `triangle`, which sets the 3.13 ceiling.
+qif-brep2mesh @ git+https://github.com/QualityInformationFramework/qif-brep2mesh.git@v0.1

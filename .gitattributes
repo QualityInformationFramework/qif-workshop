@@ -1,0 +1,10 @@
+# Default: store text with LF in the repository, check out native.
+* text=auto
+
+# QIF sample documents are data, and their line endings are not consistent
+# (two are CRLF, two are LF). Never convert them. This suppresses conversion,
+# not diffing.
+*.qif -text
+
+# Notebooks are JSON. Tooling, nbstripout and diffs all assume LF.
+*.ipynb text eol=lf
